@@ -1,0 +1,2159 @@
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ปฏิทินเทรด</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #0D1117;
+    --surface: #161B22;
+    --surface-2: #1C2330;
+    --surface-hover: #232B3A;
+    --border: #2A313D;
+    --text: #E6EDF3;
+    --muted: #8B949E;
+    --muted-2: #57606A;
+    --profit: #3FB68F;
+    --profit-dim: rgba(63,182,143,0.18);
+    --loss: #F0665B;
+    --loss-dim: rgba(240,102,91,0.18);
+    --gold: #E3B341;
+    --gold-dim: rgba(227,179,65,0.16);
+    --radius-s: 8px;
+    --radius-m: 14px;
+    --radius-l: 20px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 18px 14px 40px;
+    padding-top: calc(18px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .brand .mark {
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+
+  .brand h1 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .sync-status {
+    font-size: 10px;
+    color: var(--muted-2);
+    margin-top: 2px;
+  }
+
+  .sync-status.online {
+    color: var(--profit);
+  }
+
+  .sync-status.error {
+    color: var(--loss);
+  }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .icon-btn:active {
+    background: var(--surface-hover);
+  }
+
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    padding: 12px 10px;
+    min-width: 0;
+  }
+
+  .stat .label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .stat .value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .stat.profit .value {
+    color: var(--profit);
+  }
+
+  .stat.loss .value {
+    color: var(--loss);
+  }
+
+  .stat .sub {
+    font-size: 10.5px;
+    color: var(--muted-2);
+    margin-top: 3px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .capital-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    padding: 10px 12px;
+    margin-bottom: 16px;
+  }
+
+  .capital-row label {
+    font-size: 12.5px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .capital-row input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: right;
+    outline: none;
+    min-width: 0;
+  }
+
+  .month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .month-nav h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .month-nav .navbtns {
+    display: flex;
+    gap: 6px;
+  }
+
+  .cal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    padding: 10px;
+  }
+
+  .dow {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 4px;
+  }
+
+  .dow div {
+    text-align: center;
+    font-size: 10.5px;
+    color: var(--muted-2);
+    padding: 4px 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .cell {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 9px;
+    background: var(--surface-2);
+    border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 2px;
+    min-width: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .cell.empty {
+    background: transparent;
+    cursor: default;
+  }
+
+  .cell.today {
+    border-color: var(--gold);
+  }
+
+  .cell .d {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .cell .amt {
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 2px;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cell.has-profit {
+    background: var(--profit-dim);
+  }
+
+  .cell.has-profit .d,
+  .cell.has-profit .amt {
+    color: var(--profit);
+    font-weight: 700;
+  }
+
+  .cell.has-loss {
+    background: var(--loss-dim);
+  }
+
+  .cell.has-loss .d,
+  .cell.has-loss .amt {
+    color: var(--loss);
+    font-weight: 700;
+  }
+
+  .cell:active {
+    filter: brightness(1.15);
+  }
+
+  .legend {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .legend span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .legend i {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  /* bottom sheet */
+
+  .sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+  }
+
+  .sheet-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sheet {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+    padding: 18px 18px calc(22px + env(safe-area-inset-bottom, 0px));
+    transform: translateY(100%);
+    transition: transform 0.25s cubic-bezier(.2,.9,.3,1);
+    z-index: 11;
+  }
+
+  .sheet.open {
+    transform: translateY(0);
+  }
+
+  .sheet .handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 14px;
+  }
+
+  .sheet .title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .toggle-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .toggle-btn.active.profit {
+    background: var(--profit-dim);
+    color: var(--profit);
+    border-color: var(--profit);
+  }
+
+  .toggle-btn.active.loss {
+    background: var(--loss-dim);
+    color: var(--loss);
+    border-color: var(--loss);
+  }
+
+  .sheet input[type=text] {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    outline: none;
+    margin-bottom: 14px;
+  }
+
+  .sheet-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-save {
+    background: var(--gold);
+    color: #1A1206;
+  }
+
+  .btn-clear {
+    background: var(--surface-2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-cancel {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  @media (max-width: 400px) {
+    body {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .stats {
+      gap: 5px;
+    }
+
+    .stat {
+      padding: 10px 7px;
+    }
+
+    .stat .value {
+      font-size: 14px;
+    }
+
+    .cell .amt {
+      font-size: 10px;
+    }
+
+    .cell .d {
+      font-size: 13px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <div class="top">
+
+    <div class="brand">
+
+      <span class="mark">
+        บันทึกผลการเทรด
+      </span>
+
+      <h1 id="rangeLabel">
+        ปฏิทินเทรด
+      </h1>
+
+      <span class="sync-status" id="syncStatus">
+        กำลังเชื่อมต่อ...
+      </span>
+
+    </div>
+
+    <div
+      class="icon-btn"
+      id="resetBtn"
+      title="ล้างข้อมูลเดือนนี้"
+    >
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3 6h18"/>
+        <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/>
+        <path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/>
+      </svg>
+
+    </div>
+
+  </div>
+
+
+  <div class="stats">
+
+    <div class="stat" id="statMonth">
+
+      <div class="label">
+        ยอดเดือนนี้
+      </div>
+
+      <div class="value">
+        -
+      </div>
+
+    </div>
+
+
+    <div class="stat" id="statPercent">
+
+      <div class="label">
+        % เปลี่ยนแปลง
+      </div>
+
+      <div class="value">
+        -
+      </div>
+
+      <div
+        class="sub"
+        id="statPercentSub"
+      ></div>
+
+    </div>
+
+
+    <div class="stat" id="statTotal">
+
+      <div class="label">
+        ยอดสะสมทั้งหมด
+      </div>
+
+      <div class="value">
+        -
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="capital-row">
+
+    <label for="capitalInput">
+      เงินทุนเริ่มต้น ($)
+    </label>
+
+    <input
+      type="text"
+      inputmode="decimal"
+      id="capitalInput"
+      placeholder="0"
+    >
+
+  </div>
+
+
+  <div class="month-nav">
+
+    <h2 id="monthLabel">
+      -
+    </h2>
+
+    <div class="navbtns">
+
+      <div
+        class="icon-btn"
+        id="prevBtn"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+
+      </div>
+
+
+      <div
+        class="icon-btn"
+        id="nextBtn"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="cal">
+
+    <div
+      class="dow"
+      id="dow"
+    ></div>
+
+    <div
+      class="grid"
+      id="grid"
+    ></div>
+
+  </div>
+
+
+  <div class="legend">
+
+    <span>
+      <i style="background:var(--profit)"></i>
+      กำไร
+    </span>
+
+    <span>
+      <i style="background:var(--loss)"></i>
+      ขาดทุน
+    </span>
+
+    <span>
+      <i style="background:var(--gold)"></i>
+      วันนี้
+    </span>
+
+  </div>
+
+</div>
+
+
+<div
+  class="sheet-backdrop"
+  id="backdrop"
+></div>
+
+
+<div
+  class="sheet"
+  id="sheet"
+>
+
+  <div class="handle"></div>
+
+  <div
+    class="title"
+    id="sheetTitle"
+  >
+    บันทึกผลเทรด
+  </div>
+
+
+  <div class="toggle-row">
+
+    <button
+      class="toggle-btn profit"
+      id="btnProfit"
+      type="button"
+    >
+      กำไร
+    </button>
+
+    <button
+      class="toggle-btn loss"
+      id="btnLoss"
+      type="button"
+    >
+      ขาดทุน
+    </button>
+
+  </div>
+
+
+  <input
+    type="text"
+    inputmode="decimal"
+    id="amountInput"
+    placeholder="จำนวนเงิน ($)"
+  >
+
+
+  <div class="sheet-actions">
+
+    <button
+      class="btn btn-cancel"
+      id="btnCancel"
+      type="button"
+    >
+      ยกเลิก
+    </button>
+
+    <button
+      class="btn btn-clear"
+      id="btnDelete"
+      type="button"
+    >
+      ลบ
+    </button>
+
+    <button
+      class="btn btn-save"
+      id="btnSave"
+      type="button"
+    >
+      บันทึก
+    </button>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+/* =========================================================
+   FIREBASE
+   ========================================================= */
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+import {
+  getAuth,
+  signInAnonymously
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyBsF_rzmS_rz3Bj-XQxdY9Dr3Z-yK0zJ6Y",
+
+  authDomain:
+    "trade-66eb9.firebaseapp.com",
+
+  projectId:
+    "trade-66eb9",
+
+  storageBucket:
+    "trade-66eb9.firebasestorage.app",
+
+  messagingSenderId:
+    "624250473489",
+
+  appId:
+    "1:624250473489:web:8af209c0753a9a738475b0",
+
+  measurementId:
+    "G-3J4NENHZGF"
+};
+
+
+const app =
+  initializeApp(firebaseConfig);
+
+
+const db =
+  getFirestore(app);
+
+
+const auth =
+  getAuth(app);
+
+
+/*
+  สำคัญ:
+  ทุกคนใช้ปฏิทินชุดเดียวกัน
+*/
+
+const sharedDoc =
+  doc(
+    db,
+    "tradeCalendar",
+    "shared"
+  );
+
+
+/* =========================================================
+   CONSTANTS
+   ========================================================= */
+
+const THAI_MONTHS = [
+
+  "มกราคม",
+  "กุมภาพันธ์",
+  "มีนาคม",
+  "เมษายน",
+  "พฤษภาคม",
+  "มิถุนายน",
+  "กรกฎาคม",
+  "สิงหาคม",
+  "กันยายน",
+  "ตุลาคม",
+  "พฤศจิกายน",
+  "ธันวาคม"
+
+];
+
+
+const THAI_DOW = [
+  "อา",
+  "จ",
+  "อ",
+  "พ",
+  "พฤ",
+  "ศ",
+  "ส"
+];
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+const state = {
+
+  data: {},
+
+  capital: 0,
+
+  view: new Date(),
+
+  selectedDay: null,
+
+  sheetMode: "profit"
+
+};
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const sheet =
+  document.getElementById("sheet");
+
+
+const backdrop =
+  document.getElementById("backdrop");
+
+
+const amountInput =
+  document.getElementById("amountInput");
+
+
+const btnProfit =
+  document.getElementById("btnProfit");
+
+
+const btnLoss =
+  document.getElementById("btnLoss");
+
+
+const capitalInput =
+  document.getElementById("capitalInput");
+
+
+const syncStatus =
+  document.getElementById("syncStatus");
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+function setStatus(
+  text,
+  type = ""
+) {
+
+  syncStatus.textContent =
+    text;
+
+  syncStatus.className =
+    "sync-status " + type;
+
+}
+
+
+/* =========================================================
+   MONTH KEY
+   ========================================================= */
+
+function monthKey(date) {
+
+  return (
+    date.getFullYear() +
+    "-" +
+    date.getMonth()
+  );
+
+}
+
+
+/* =========================================================
+   MONEY
+   ========================================================= */
+
+function fmtMoney(n) {
+
+  n = Number(n) || 0;
+
+  const sign =
+    n < 0
+      ? "-"
+      : n > 0
+        ? "+"
+        : "";
+
+  const abs =
+    Math.abs(n);
+
+  return (
+    sign +
+    "$" +
+    abs.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits:
+          abs % 1 === 0 ? 0 : 2,
+
+        maximumFractionDigits:
+          2
+      }
+    )
+  );
+
+}
+
+
+/* =========================================================
+   MONTH TOTAL
+   ========================================================= */
+
+function monthTotal(date) {
+
+  const key =
+    monthKey(date);
+
+  const entries =
+    state.data[key] || {};
+
+  let total = 0;
+
+  Object.keys(entries)
+    .forEach(day => {
+
+      total +=
+        Number(entries[day]) || 0;
+
+    });
+
+  return total;
+
+}
+
+
+/* =========================================================
+   ALL TIME TOTAL
+   ========================================================= */
+
+function allTimeTotal() {
+
+  let total = 0;
+
+  Object.keys(state.data)
+    .forEach(month => {
+
+      const entries =
+        state.data[month];
+
+      Object.keys(entries)
+        .forEach(day => {
+
+          total +=
+            Number(entries[day]) || 0;
+
+        });
+
+    });
+
+  return total;
+
+}
+
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+
+function render() {
+
+  const date =
+    state.view;
+
+
+  document.getElementById(
+    "monthLabel"
+  ).textContent =
+
+    THAI_MONTHS[
+      date.getMonth()
+    ] +
+    " " +
+    (
+      date.getFullYear() + 543
+    );
+
+
+  document.getElementById(
+    "rangeLabel"
+  ).textContent =
+    "ปฏิทินเทรด";
+
+
+  /*
+    CAPITAL
+  */
+
+  if (
+    document.activeElement !==
+    capitalInput
+  ) {
+
+    capitalInput.value =
+      state.capital
+        ? state.capital
+            .toLocaleString("en-US")
+        : "";
+
+  }
+
+
+  /*
+    STATS
+  */
+
+  const mTotal =
+    monthTotal(date);
+
+
+  const aTotal =
+    allTimeTotal();
+
+
+  const pct =
+    state.capital > 0
+      ? (
+          mTotal /
+          state.capital *
+          100
+        )
+      : null;
+
+
+  /*
+    MONTH
+  */
+
+  const statMonth =
+    document.getElementById(
+      "statMonth"
+    );
+
+
+  statMonth
+    .querySelector(".value")
+    .textContent =
+      fmtMoney(mTotal);
+
+
+  statMonth.className =
+    "stat" +
+    (
+      mTotal > 0
+        ? " profit"
+        : mTotal < 0
+          ? " loss"
+          : ""
+    );
+
+
+  /*
+    PERCENT
+  */
+
+  const statPercent =
+    document.getElementById(
+      "statPercent"
+    );
+
+
+  const pctVal =
+    statPercent
+      .querySelector(".value");
+
+
+  const pctSub =
+    document.getElementById(
+      "statPercentSub"
+    );
+
+
+  if (pct === null) {
+
+    pctVal.textContent =
+      "-";
+
+    pctSub.textContent =
+      "ใส่เงินทุนเริ่มต้น";
+
+  } else {
+
+    pctVal.textContent =
+      (
+        pct >= 0 ? "+" : ""
+      ) +
+      pct.toFixed(2) +
+      "%";
+
+
+    pctSub.textContent =
+      "จากเงินทุน $" +
+      state.capital
+        .toLocaleString("en-US");
+
+  }
+
+
+  statPercent.className =
+    "stat" +
+    (
+      pct > 0
+        ? " profit"
+        : pct < 0
+          ? " loss"
+          : ""
+    );
+
+
+  /*
+    TOTAL
+  */
+
+  const statTotal =
+    document.getElementById(
+      "statTotal"
+    );
+
+
+  statTotal
+    .querySelector(".value")
+    .textContent =
+      fmtMoney(aTotal);
+
+
+  statTotal.className =
+    "stat" +
+    (
+      aTotal > 0
+        ? " profit"
+        : aTotal < 0
+          ? " loss"
+          : ""
+    );
+
+
+  renderCalendar(date);
+
+}
+
+
+/* =========================================================
+   CALENDAR
+   ========================================================= */
+
+function renderCalendar(date) {
+
+  const dowEl =
+    document.getElementById("dow");
+
+
+  dowEl.innerHTML = "";
+
+
+  THAI_DOW.forEach(day => {
+
+    const el =
+      document.createElement("div");
+
+
+    el.textContent =
+      day;
+
+
+    dowEl.appendChild(el);
+
+  });
+
+
+  const grid =
+    document.getElementById("grid");
+
+
+  grid.innerHTML = "";
+
+
+  const year =
+    date.getFullYear();
+
+
+  const month =
+    date.getMonth();
+
+
+  const firstDay =
+    new Date(
+      year,
+      month,
+      1
+    ).getDay();
+
+
+  const daysInMonth =
+    new Date(
+      year,
+      month + 1,
+      0
+    ).getDate();
+
+
+  const key =
+    monthKey(date);
+
+
+  const entries =
+    state.data[key] || {};
+
+
+  const today =
+    new Date();
+
+
+  const isCurrentMonth =
+
+    today.getFullYear() ===
+      year &&
+
+    today.getMonth() ===
+      month;
+
+
+  /*
+    EMPTY CELLS
+  */
+
+  for (
+    let i = 0;
+    i < firstDay;
+    i++
+  ) {
+
+    const empty =
+      document.createElement("div");
+
+
+    empty.className =
+      "cell empty";
+
+
+    grid.appendChild(empty);
+
+  }
+
+
+  /*
+    DAYS
+  */
+
+  for (
+    let day = 1;
+    day <= daysInMonth;
+    day++
+  ) {
+
+    const cell =
+      document.createElement("div");
+
+
+    cell.className =
+      "cell";
+
+
+    /*
+      TODAY
+    */
+
+    if (
+      isCurrentMonth &&
+      today.getDate() === day
+    ) {
+
+      cell.classList.add(
+        "today"
+      );
+
+    }
+
+
+    /*
+      ENTRY
+    */
+
+    const amt =
+      Number(entries[day]);
+
+
+    if (
+      entries[day] !== undefined &&
+      !isNaN(amt)
+    ) {
+
+      cell.classList.add(
+        amt >= 0
+          ? "has-profit"
+          : "has-loss"
+      );
+
+    }
+
+
+    /*
+      DAY NUMBER
+    */
+
+    const dEl =
+      document.createElement("div");
+
+
+    dEl.className =
+      "d";
+
+
+    dEl.textContent =
+      day;
+
+
+    cell.appendChild(dEl);
+
+
+    /*
+      AMOUNT
+    */
+
+    if (
+      entries[day] !== undefined &&
+      !isNaN(amt)
+    ) {
+
+      const aEl =
+        document.createElement("div");
+
+
+      aEl.className =
+        "amt";
+
+
+      aEl.textContent =
+        fmtMoney(amt);
+
+
+      cell.appendChild(aEl);
+
+    }
+
+
+    /*
+      CLICK
+    */
+
+    cell.addEventListener(
+      "click",
+      function() {
+
+        openSheet(day);
+
+      }
+    );
+
+
+    grid.appendChild(cell);
+
+  }
+
+}
+
+
+/* =========================================================
+   SHEET MODE
+   ========================================================= */
+
+function setMode(mode) {
+
+  state.sheetMode =
+    mode;
+
+
+  btnProfit.classList.toggle(
+    "active",
+    mode === "profit"
+  );
+
+
+  btnLoss.classList.toggle(
+    "active",
+    mode === "loss"
+  );
+
+}
+
+
+/* =========================================================
+   OPEN SHEET
+   ========================================================= */
+
+function openSheet(day) {
+
+  state.selectedDay =
+    day;
+
+
+  const date =
+    state.view;
+
+
+  const key =
+    monthKey(date);
+
+
+  const existing =
+    (
+      state.data[key] || {}
+    )[day];
+
+
+  document.getElementById(
+    "sheetTitle"
+  ).textContent =
+
+    "วันที่ " +
+    day +
+    " " +
+    THAI_MONTHS[
+      date.getMonth()
+    ] +
+    " " +
+    (
+      date.getFullYear() + 543
+    );
+
+
+  if (
+    typeof existing ===
+    "number"
+  ) {
+
+    setMode(
+      existing >= 0
+        ? "profit"
+        : "loss"
+    );
+
+
+    amountInput.value =
+      Math.abs(existing)
+        .toString();
+
+  } else {
+
+    setMode("profit");
+
+    amountInput.value = "";
+
+  }
+
+
+  sheet.classList.add(
+    "open"
+  );
+
+
+  backdrop.classList.add(
+    "open"
+  );
+
+
+  setTimeout(
+    function() {
+
+      amountInput.focus();
+
+    },
+    250
+  );
+
+}
+
+
+/* =========================================================
+   CLOSE SHEET
+   ========================================================= */
+
+function closeSheet() {
+
+  sheet.classList.remove(
+    "open"
+  );
+
+
+  backdrop.classList.remove(
+    "open"
+  );
+
+
+  state.selectedDay =
+    null;
+
+}
+
+
+/* =========================================================
+   SAVE FIREBASE
+   ========================================================= */
+
+async function saveToFirebase() {
+
+  try {
+
+    setStatus(
+      "กำลังบันทึก...",
+      ""
+    );
+
+
+    await setDoc(
+      sharedDoc,
+      {
+        data: state.data,
+
+        capital:
+          Number(state.capital) || 0,
+
+        updatedAt:
+          Date.now()
+      },
+      {
+        merge: true
+      }
+    );
+
+
+    setStatus(
+      "ซิงก์แล้ว",
+      "online"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Firebase save error:",
+      error
+    );
+
+
+    setStatus(
+      "บันทึกไม่สำเร็จ",
+      "error"
+    );
+
+
+    alert(
+      "ไม่สามารถบันทึกข้อมูลได้\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   REALTIME FIREBASE
+   ========================================================= */
+
+function listenToFirebase() {
+
+  onSnapshot(
+
+    sharedDoc,
+
+    function(snapshot) {
+
+      if (
+        snapshot.exists()
+      ) {
+
+        const data =
+          snapshot.data();
+
+
+        state.data =
+          data.data || {};
+
+
+        state.capital =
+          Number(
+            data.capital
+          ) || 0;
+
+
+      } else {
+
+        /*
+          ถ้ายังไม่มีข้อมูล
+          สร้างข้อมูลเริ่มต้น
+        */
+
+        state.data = {};
+
+        state.capital = 0;
+
+
+        saveToFirebase();
+
+      }
+
+
+      render();
+
+
+      setStatus(
+        "ซิงก์แล้ว",
+        "online"
+      );
+
+    },
+
+
+    function(error) {
+
+      console.error(
+        "Firebase realtime error:",
+        error
+      );
+
+
+      setStatus(
+        "เชื่อมต่อไม่ได้",
+        "error"
+      );
+
+    }
+
+  );
+
+}
+
+
+/* =========================================================
+   PROFIT BUTTON
+   ========================================================= */
+
+btnProfit.addEventListener(
+  "click",
+  function() {
+
+    setMode("profit");
+
+  }
+);
+
+
+/* =========================================================
+   LOSS BUTTON
+   ========================================================= */
+
+btnLoss.addEventListener(
+  "click",
+  function() {
+
+    setMode("loss");
+
+  }
+);
+
+
+/* =========================================================
+   BACKDROP
+   ========================================================= */
+
+backdrop.addEventListener(
+  "click",
+  closeSheet
+);
+
+
+/* =========================================================
+   CANCEL
+   ========================================================= */
+
+document.getElementById(
+  "btnCancel"
+).addEventListener(
+  "click",
+  closeSheet
+);
+
+
+/* =========================================================
+   SAVE DAY
+   ========================================================= */
+
+document.getElementById(
+  "btnSave"
+).addEventListener(
+  "click",
+  async function() {
+
+    if (
+      state.selectedDay ===
+      null
+    ) {
+
+      return;
+
+    }
+
+
+    const raw =
+      amountInput.value
+        .replace(/,/g, "")
+        .trim();
+
+
+    let val =
+      parseFloat(raw);
+
+
+    if (
+      isNaN(val) ||
+      val === 0
+    ) {
+
+      closeSheet();
+
+      return;
+
+    }
+
+
+    val =
+      Math.abs(val) *
+      (
+        state.sheetMode ===
+        "loss"
+          ? -1
+          : 1
+      );
+
+
+    const key =
+      monthKey(
+        state.view
+      );
+
+
+    if (
+      !state.data[key]
+    ) {
+
+      state.data[key] = {};
+
+    }
+
+
+    state.data[key][
+      state.selectedDay
+    ] = val;
+
+
+    closeSheet();
+
+
+    render();
+
+
+    await saveToFirebase();
+
+  }
+);
+
+
+/* =========================================================
+   DELETE DAY
+   ========================================================= */
+
+document.getElementById(
+  "btnDelete"
+).addEventListener(
+  "click",
+  async function() {
+
+    if (
+      state.selectedDay ===
+      null
+    ) {
+
+      return;
+
+    }
+
+
+    const key =
+      monthKey(
+        state.view
+      );
+
+
+    if (
+      state.data[key]
+    ) {
+
+      delete state.data[key][
+        state.selectedDay
+      ];
+
+
+      if (
+        Object.keys(
+          state.data[key]
+        ).length === 0
+      ) {
+
+        delete state.data[key];
+
+      }
+
+    }
+
+
+    closeSheet();
+
+
+    render();
+
+
+    await saveToFirebase();
+
+  }
+);
+
+
+/* =========================================================
+   CAPITAL
+   ========================================================= */
+
+capitalInput.addEventListener(
+  "change",
+  async function() {
+
+    const raw =
+      capitalInput.value
+        .replace(/,/g, "")
+        .trim();
+
+
+    const val =
+      parseFloat(raw);
+
+
+    state.capital =
+      isNaN(val)
+        ? 0
+        : val;
+
+
+    render();
+
+
+    await saveToFirebase();
+
+  }
+);
+
+
+/* =========================================================
+   PREVIOUS MONTH
+   ========================================================= */
+
+document.getElementById(
+  "prevBtn"
+).addEventListener(
+  "click",
+  function() {
+
+    state.view =
+      new Date(
+        state.view.getFullYear(),
+        state.view.getMonth() - 1,
+        1
+      );
+
+
+    render();
+
+  }
+);
+
+
+/* =========================================================
+   NEXT MONTH
+   ========================================================= */
+
+document.getElementById(
+  "nextBtn"
+).addEventListener(
+  "click",
+  function() {
+
+    state.view =
+      new Date(
+        state.view.getFullYear(),
+        state.view.getMonth() + 1,
+        1
+      );
+
+
+    render();
+
+  }
+);
+
+
+/* =========================================================
+   RESET MONTH
+   ========================================================= */
+
+document.getElementById(
+  "resetBtn"
+).addEventListener(
+  "click",
+  async function() {
+
+    const key =
+      monthKey(
+        state.view
+      );
+
+
+    if (
+      state.data[key] &&
+      Object.keys(
+        state.data[key]
+      ).length > 0
+    ) {
+
+      if (
+        confirm(
+          "ล้างข้อมูลทั้งหมดของเดือนนี้?"
+        )
+      ) {
+
+        delete state.data[key];
+
+
+        render();
+
+
+        await saveToFirebase();
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   ENTER KEY IN AMOUNT
+   ========================================================= */
+
+amountInput.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.key === "Enter"
+    ) {
+
+      document.getElementById(
+        "btnSave"
+      ).click();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   START FIREBASE
+   ========================================================= */
+
+async function startFirebase() {
+
+  try {
+
+    setStatus(
+      "กำลังเข้าสู่ระบบ...",
+      ""
+    );
+
+
+    /*
+      Anonymous Authentication
+    */
+
+    await signInAnonymously(
+      auth
+    );
+
+
+    setStatus(
+      "กำลังซิงก์ข้อมูล...",
+      ""
+    );
+
+
+    /*
+      รับข้อมูลแบบ Real-time
+    */
+
+    listenToFirebase();
+
+
+  } catch (error) {
+
+    console.error(
+      "Firebase startup error:",
+      error
+    );
+
+
+    setStatus(
+      "เชื่อมต่อ Firebase ไม่ได้",
+      "error"
+    );
+
+
+    alert(
+      "เชื่อมต่อ Firebase ไม่สำเร็จ\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   INITIAL RENDER
+   ========================================================= */
+
+render();
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+startFirebase();
+
+</script>
+
+</body>
+</html>
+```
